@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { serve } from "@hono/node-server";
 
 const app = new Hono();
@@ -89,7 +89,7 @@ app.post("/orders", async (c) => {
       restaurantId,
       totalPrice,
       orderItems: {
-        create: items.map(({ menuItemId, quantity }: { menuItemId: number; quantity: number }) => ({
+        create: items.map(({ menuItemId, quantity }: { menuItemId: number, quantity: number }) => ({
           menuItemId,
           quantity,
         })),
@@ -174,6 +174,22 @@ app.get("/customers/top", async (c) => {
     take: 5,
   });
   return c.json(topCustomers);
+});
+
+app.get('/menu/top-items', async (c) => {
+  const topItem = await prismaClient.orderItem.groupBy({
+    by: ['menuItemId'],
+    _sum: { quantity: true },
+    orderBy: { _sum: { quantity: 'desc' } },
+    take: 1,
+  });
+  if (topItem.length === 0) return c.json({ message: 'No menu items found' }, 404);
+
+  const menuItem = await prismaClient.menuItem.findUnique({
+    where: { id: topItem[0].menuItemId },
+  });
+
+  return c.json(menuItem);
 });
 
 
