@@ -150,26 +150,22 @@ app.get("/restaurants/:id/revenue", async (c) => {
   return c.json({ revenue: revenue._sum.totalPrice || 0 });
 });
 
-app.get("/menu/top-items", async (c) => {
-  const topItem = await prismaClient.orderItem.groupBy({
-    by: ["menuItemId"],
-    _sum: { quantity: true },
-    orderBy: { _sum: { quantity: "desc" } },
-    take: 1,
+app.get('/orders', async (c) => {
+  const orders = await prismaClient.order.findMany({
+    include: {
+      customer: false,
+      restaurant: false,
+      orderItems: {
+        include: {
+          menuItem: true,
+        },
+      },
+    },
   });
-  return c.json(topItem);
+  return c.json(orders);
 });
 
 
-app.get("/customers/top", async (c) => {
-  const topCustomers = await prismaClient.order.groupBy({
-    by: ["customerId"],
-    _count: { _all: true },
-    orderBy: { _count: { _all: "desc" } },
-    take: 5,
-  });
-  return c.json(topCustomers);
-});
 
 
 serve(app);
