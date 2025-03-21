@@ -141,4 +141,4 @@ app.get("/customers/top", async (c) => {
 //  Serve the Hono app on port 3000
 serve(app);
 
-console.log('server is running at ');
+console.log('server is running at http://localhost:3000/');
