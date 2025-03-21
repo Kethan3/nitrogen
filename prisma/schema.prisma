@@ -14,10 +14,10 @@ datasource db {
 }
 
 model Customer {
-  id          String    @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
-  email       String    @unique
-  phoneNumber String    @unique
+  email       String  @unique
+  phoneNumber String  @unique
   address     String
   orders      Order[]
 }
@@ -31,12 +31,12 @@ model Restaurant {
 }
 
 model MenuItem {
-  id           String     @id @default(uuid())
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  id           String      @id @default(uuid())
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id])
   restaurantId String
   name         String
   price        Decimal
-  isAvailable  Boolean   @default(true)
+  isAvailable  Boolean     @default(true)
   orderItems   OrderItem[]
 }
 
@@ -67,4 +67,3 @@ enum OrderStatus {
   COMPLETED
   CANCELLED
 }
-
