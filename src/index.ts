@@ -166,6 +166,15 @@ app.get('/orders', async (c) => {
 });
 
 
+app.get("/customers/top", async (c) => {
+  const topCustomers = await prismaClient.order.groupBy({
+    by: ["customerId"],
+    _count: { _all: true },
+    orderBy: { _count: { customerId: "desc" } },
+    take: 5,
+  });
+  return c.json(topCustomers);
+});
 
 
 serve(app);
